@@ -1,0 +1,1 @@
+from .parser_content import get_connection, get_info_from_an_article
