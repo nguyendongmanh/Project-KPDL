@@ -31,9 +31,9 @@ def main():
         time.sleep(1)
     
     # get article's information    
+    articles_content_by_topic = defaultdict(list)
     for topic, articles in articles_by_topic.items():
         print(topic)
-        articles_content_by_topic = defaultdict(list)
         for article_link in tqdm(articles):
             articles_content_by_topic[topic].append(dantri.get_info_from_an_article(article_link, headers=Config.HEADERS, timeout=Config.TIMEOUT))
             time.sleep(0.5)
