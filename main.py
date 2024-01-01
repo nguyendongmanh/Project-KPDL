@@ -13,15 +13,7 @@ COLLECTION_NAME = Config.COLLECTION_NAME
 ROOT_URL = Config.ROOT_URL
 HEADERS = Config.HEADERS
 TIMEOUT = Config.TIMEOUT
-
-parser = argparse.ArgumentParser()
-
-parser.add_argument("-w", "--website", default="dantri", help='''
-                    Choose website which you want to get articles\n
-                    There are 2 options:\n
-                        + dantri
-                        + vnexpress
-                    ''')
+TARGET = Config.TARGET
 
 def get_all_from_dantri(root_url: str, headers: dict, timeout=10):
     dantri.check_time_out(timeout)
@@ -51,19 +43,17 @@ def get_all_from_vnexpress(root_url: str, headers: dict, timeout=10):
     pass
 
 def main():
-    args = parser.parse_args()
-    
     # connect to database
     client = scripts.get_connection_to_db(HOST, PORT)
     db = client[DB_NAME]
     collection = db[COLLECTION_NAME]
     
-    if args.website == 'dantri':
+    if TARGET == 'dantri':
         articles_content_by_topic = get_all_from_dantri(ROOT_URL, HEADERS, TIMEOUT)
-    elif args.website == 'vnexpress':
-        get_all_from_vnexpress(ROOT_URL, HEADERS, TIMEOUT)
+    elif TARGET == 'vnexpress':
+        articles_content_by_topic = get_all_from_vnexpress(ROOT_URL, HEADERS, TIMEOUT)
         
-    # collection.insert_one(articles_content_by_topic)
+    collection.insert_one(articles_content_by_topic)
 
 if __name__ == '__main__':
     main()
