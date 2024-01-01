@@ -4,6 +4,10 @@ from requests import RequestException
 def check_is_next_page_from_root(url: str):
     return not ('https' in url)
 
+def check_time_out(timeout: int):
+    if timeout <= 0:
+        raise ValueError("Timeout should be positive")
+
 def get_connection(url: str, headers: dict, timeout=10):
     '''
     Get connection to web by url
@@ -16,8 +20,7 @@ def get_connection(url: str, headers: dict, timeout=10):
     Return:
         * `response`: The response after requesting consists of *status_code*, *text* 
     '''
-    if timeout <= 0:
-        raise ValueError("Timeout value should be positive")
+    check_time_out(timeout)
     response = requests.get(url=url, headers=headers, timeout=timeout)
     if response.status_code != 200:
         raise RequestException("The connection to this web has failed. Please try to connect again.")

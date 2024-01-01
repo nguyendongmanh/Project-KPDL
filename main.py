@@ -24,8 +24,7 @@ parser.add_argument("-w", "--website", default="dantri", help='''
                     ''')
 
 def get_all_from_dantri(root_url: str, headers: dict, timeout=10):
-    if timeout <= 0:
-        raise ValueError("Timeout should be positive")
+    dantri.check_time_out(timeout)
     
     topics = dantri.get_topics(root_url=root_url, headers=headers, timeout=timeout)
     # get all article's link in each pagination
