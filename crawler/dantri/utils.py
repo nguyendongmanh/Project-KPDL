@@ -1,6 +1,8 @@
 import requests
 from requests import RequestException
 
+ROOT_URL = r'https://dantri.com.vn'
+
 def check_is_next_page_from_root(url: str):
     return not ('https' in url)
 

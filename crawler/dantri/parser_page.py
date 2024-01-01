@@ -3,9 +3,10 @@ from tqdm import tqdm
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from collections import defaultdict
-from .utils import check_is_next_page_from_root, get_connection
+from .utils import check_is_next_page_from_root, get_connection, ROOT_URL
 
-def get_topics(root_url: str, headers: dict, timeout=10):
+
+def get_topics(headers: dict, timeout=10, root_url=ROOT_URL):
     '''
     Extract the main topics from website.
     
@@ -30,9 +31,17 @@ def get_topics(root_url: str, headers: dict, timeout=10):
     return topics
 
 def get_articles_by_topic(topic_url: str, headers: dict, timeout=10, max_pagination=5):
-    if max_pagination <= 0:
-        raise ValueError("MAX_PAGINATION must be positive")
+    '''
+    Extract articles by topic in each pagination
     
+    Args:
+    * `topic_url`: Topic URL
+    * `header`: Set header to requests, it helps avoid bot detection
+    * `timeout`: The maximum of time to requests
+    
+    Return:
+        * `articles_links`: the list of article hyper reference
+    '''
     articles_links = []
     next_page = topic_url
     for _ in tqdm(range(max_pagination)):
