@@ -1,6 +1,5 @@
 import time
-import scripts
-import argparse
+import json
 from tqdm import tqdm
 from config import Config
 from crawler import dantri
@@ -14,6 +13,8 @@ ROOT_URL = Config.ROOT_URL
 HEADERS = Config.HEADERS
 TIMEOUT = Config.TIMEOUT
 TARGET = Config.TARGET
+MAX_PAGINATION = Config.MAX_PAGINATION
+EXPORT_TO = Config.EXPORT_TO
 
 def get_all_from_dantri(root_url: str, headers: dict, timeout=10):
     dantri.check_time_out(timeout)
@@ -24,7 +25,7 @@ def get_all_from_dantri(root_url: str, headers: dict, timeout=10):
     for main_topic, sub_topics in topics.items():
         print(main_topic)
         for sub_topic in sub_topics:
-            articles_links = dantri.get_articles_by_topic(sub_topic, headers=headers, timeout=timeout)
+            articles_links = dantri.get_articles_by_topic(sub_topic, headers=headers, timeout=timeout, max_pagination=MAX_PAGINATION)
             articles_by_topic[main_topic] += articles_links
             time.sleep(1)
         time.sleep(1)
@@ -37,23 +38,28 @@ def get_all_from_dantri(root_url: str, headers: dict, timeout=10):
             articles_content_by_topic[topic].append(dantri.get_info_from_an_article(article_link, headers=headers, timeout=timeout))
             time.sleep(0.5)
         time.sleep(1)
-    return articles_content_by_topic
+    
+    file_type = EXPORT_TO.lower()
+    
+    if file_type == 'json':
+        # write output to json
+        with open('data/dantri.json', "w", encoding='utf-8') as f:
+            json.dump(articles_content_by_topic, f, indent=4, ensure_ascii=False)
+    elif file_type == 'csv':
+        pass
+    elif file_type == 'mongo':
+        pass
+    else:
+        raise Exception("You only can save data as 2 type, json and csv")
 
 def get_all_from_vnexpress(root_url: str, headers: dict, timeout=10):
     pass
 
 def main():
-    # connect to database
-    client = scripts.get_connection_to_db(HOST, PORT)
-    db = client[DB_NAME]
-    collection = db[COLLECTION_NAME]
-    
     if TARGET == 'dantri':
-        articles_content_by_topic = get_all_from_dantri(ROOT_URL, HEADERS, TIMEOUT)
+        get_all_from_dantri(ROOT_URL, HEADERS, TIMEOUT)
     elif TARGET == 'vnexpress':
-        articles_content_by_topic = get_all_from_vnexpress(ROOT_URL, HEADERS, TIMEOUT)
-        
-    collection.insert_one(articles_content_by_topic)
+        get_all_from_vnexpress(ROOT_URL, HEADERS, TIMEOUT)
 
 if __name__ == '__main__':
     main()

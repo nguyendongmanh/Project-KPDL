@@ -1,11 +1,10 @@
-import argparse
+import json
 
-parser = argparse.ArgumentParser()
+with open('data/dantri_encoding.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
 
-parser.add_argument('-w', '--website', help='Choose website you want to crawl (dantri or vnexpress)')
+# with open('data/dantri_encoding.json', 'w', encoding='utf-8') as f:
+#     json.dump(data, f, indent=4, ensure_ascii=False)
 
-# Read arguments from command line
-args = parser.parse_args()
- 
-if args.website:
-    print("Displaying Output as: % s" % args.website)
+for key, _ in data.items():
+    print(key)

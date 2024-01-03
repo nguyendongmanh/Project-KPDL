@@ -20,4 +20,6 @@ class Config:
     DB_NAME = os.getenv('DB_NAME')
     COLLECTION_NAME = os.getenv('COLLECTION_NAME')
     
+    EXPORT_TO = os.getenv('EXPORT_TO')
+    
     
